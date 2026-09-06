@@ -1,0 +1,6 @@
+{
+  "name": "TeknoGen",
+  "description": "Portal informasi teknologi modern berbahasa Indonesia yang berfokus pada Artificial Intelligence (AI), Aplikasi, dan Perkembangan Teknologi terkini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
