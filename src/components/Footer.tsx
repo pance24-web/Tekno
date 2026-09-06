@@ -91,12 +91,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               onClick={() => onNavigate('home')} 
               className="flex items-center gap-3 cursor-pointer group select-none inline-flex"
             >
-              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md ring-1 ring-slate-700 group-hover:scale-105 transition-transform shrink-0 bg-slate-800 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md ring-1 ring-slate-700 group-hover:scale-105 transition-transform shrink-0 bg-white flex items-center justify-center p-0.5">
                 <img
                   src={TEKNOGEN_LOGO_URL}
                   alt="TeknoGen Logo"
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <span className="text-xl font-extrabold tracking-tight text-white">

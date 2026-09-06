@@ -94,12 +94,11 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </div>
           {/* Badge Overlay */}
           <div className="absolute -bottom-6 -left-4 sm:left-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl overflow-hidden ring-1 ring-slate-200 dark:ring-slate-700 shrink-0 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-xl overflow-hidden ring-1 ring-slate-200 dark:ring-slate-700 shrink-0 bg-white flex items-center justify-center p-0.5 shadow-xs">
               <img
                 src={TEKNOGEN_LOGO_URL}
                 alt="TeknoGen Logo"
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
+                className="w-full h-full object-contain"
               />
             </div>
             <div>
