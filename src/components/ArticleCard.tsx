@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Clock, 
   Calendar, 
@@ -22,6 +22,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   onSelectCategory,
   layout = 'grid',
 }) => {
+  const navigate = useNavigate();
   const [bookmarked, setBookmarked] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes);
@@ -86,7 +87,15 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
             loading="lazy"
           />
           <div className="absolute top-3 left-3">
-            <span className={`inline-block px-3 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full border backdrop-blur-md shadow-xs ${getCategoryBadgeClass(article.category)}`}>
+            <span 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSelectCategory?.(article.category);
+                navigate(`/kategori/${article.category}`);
+              }}
+              className={`inline-block px-3 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full border backdrop-blur-md shadow-xs ${getCategoryBadgeClass(article.category)} hover:opacity-90`}
+            >
               {article.categoryLabel}
             </span>
           </div>
@@ -169,11 +178,10 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         <div className="absolute top-3 left-3">
           <span 
             onClick={(e) => {
-              if (onSelectCategory) {
-                e.preventDefault();
-                e.stopPropagation();
-                onSelectCategory(article.category);
-              }
+              e.preventDefault();
+              e.stopPropagation();
+              onSelectCategory?.(article.category);
+              navigate(`/kategori/${article.category}`);
             }}
             className={`inline-block px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border backdrop-blur-md shadow-xs ${getCategoryBadgeClass(article.category)} hover:opacity-90`}
           >

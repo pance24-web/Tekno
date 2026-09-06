@@ -39,7 +39,7 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
   const { slug } = useParams<{ slug: string }>();
 
   // Find article by route slug or passed prop
-  const article = propArticle || (slug ? ARTICLES.find((a) => a.slug === slug) : null) || ARTICLES[0];
+  const article = propArticle || (slug ? ARTICLES.find((a) => a.slug === slug) : null);
 
   useDocumentTitle(
     article ? article.title : 'Artikel Tidak Ditemukan',
