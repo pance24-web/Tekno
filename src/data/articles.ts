@@ -1,5 +1,7 @@
 import { Article, CategoryInfo } from '../types';
 
+export const TEKNOGEN_LOGO_URL = 'https://scontent.fcgk6-2.fna.fbcdn.net/v/t39.30808-6/785602855_122102433219449857_523751076336742903_n.jpg?stp=dst-jpg_tt6&cstp=mx960x960&ctp=s960x960&_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEuhwZ_hopUaFiFU6bwAtNMOiCRhj9Jg7E6IJGGP0mDsZUGyqDmG3Uykzt_zVkvTucRuojJ6Hg1hzQ3XzJLbhTD&_nc_ohc=vKHdMJMYtXsQ7kNvwFiEGeB&_nc_oc=AdrVx6nowjVbJDXjeUZUo8hFzPdj48VCulJMUEOxN3qZ6_l49WzesGI09RWQQA7VClINUH0Kl7RjexS_C6CpZ6St&_nc_zt=23&_nc_ht=scontent.fcgk6-2.fna&_nc_gid=SX4UyyW1l5pKpAJcdUwdTg&_nc_ss=7b2a8&oh=00_AQKGQxMTl4l_RBKDhNrhvkG2syL28FXRMUHACzycVCaikg&oe=6AA2ED0D';
+
 export const CATEGORIES: CategoryInfo[] = [
   {
     id: 'ai',

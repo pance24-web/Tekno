@@ -12,7 +12,7 @@ import {
   BookOpenCheck
 } from 'lucide-react';
 import { PageView } from '../types';
-import { AUTHORS } from '../data/articles';
+import { AUTHORS, TEKNOGEN_LOGO_URL } from '../data/articles';
 
 interface AboutPageProps {
   onNavigate: (view: PageView) => void;
@@ -94,8 +94,13 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </div>
           {/* Badge Overlay */}
           <div className="absolute -bottom-6 -left-4 sm:left-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white">
-              <Cpu className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden ring-1 ring-slate-200 dark:ring-slate-700 shrink-0 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+              <img
+                src={TEKNOGEN_LOGO_URL}
+                alt="TeknoGen Logo"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900 dark:text-white">TeknoGen Research</p>

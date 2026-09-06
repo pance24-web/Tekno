@@ -10,6 +10,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { PageView, CategorySlug } from '../types';
+import { TEKNOGEN_LOGO_URL } from '../data/articles';
 
 interface HeaderProps {
   currentView: PageView;
@@ -49,11 +50,16 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-8">
             <div 
               onClick={() => handleNavClick('home')}
-              className="flex items-center gap-2 cursor-pointer group select-none"
+              className="flex items-center gap-2.5 cursor-pointer group select-none"
               id="logo-button"
             >
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-xs group-hover:scale-105 transition-transform">
-                T
+              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-xs ring-1 ring-slate-200 dark:ring-slate-700 group-hover:scale-105 transition-transform shrink-0 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                <img
+                  src={TEKNOGEN_LOGO_URL}
+                  alt="TeknoGen Logo"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
               <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Tekno<span className="text-blue-600 dark:text-blue-400">Gen</span>
