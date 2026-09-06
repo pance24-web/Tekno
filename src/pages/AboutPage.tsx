@@ -11,14 +11,19 @@ import {
   Globe2,
   BookOpenCheck
 } from 'lucide-react';
-import { PageView } from '../types';
 import { AUTHORS, TEKNOGEN_LOGO_URL } from '../data/articles';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 interface AboutPageProps {
-  onNavigate: (view: PageView) => void;
+  onNavigate?: (view: any) => void;
 }
 
-export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
+export const AboutPage: React.FC<AboutPageProps> = () => {
+  useDocumentTitle(
+    'Tentang Kami - Visi, Misi & Redaksi TeknoGen',
+    'Kenali redaksi TeknoGen, portal independen yang berdedikasi mengedukasi ekosistem teknologi dan AI Indonesia dengan ulasan berbobot dan terpercaya.'
+  );
+
   const values = [
     {
       title: 'Akurasi & Integritas',

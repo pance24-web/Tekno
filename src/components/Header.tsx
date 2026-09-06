@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { 
-  Cpu, 
   Search, 
   Sun, 
   Moon, 
@@ -9,38 +9,29 @@ import {
   Sparkles,
   ChevronRight
 } from 'lucide-react';
-import { PageView, CategorySlug } from '../types';
 import { TEKNOGEN_LOGO_URL } from '../data/articles';
 
 interface HeaderProps {
-  currentView: PageView;
-  onNavigate: (view: PageView, category?: CategorySlug, articleSlug?: string) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   onOpenSearch: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  currentView,
-  onNavigate,
   darkMode,
   onToggleDarkMode,
   onOpenSearch,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
-  const navLinks: { label: string; view: PageView; category?: CategorySlug }[] = [
-    { label: 'Beranda', view: 'home' },
-    { label: 'Artikel', view: 'articles' },
-    { label: 'Kategori', view: 'category', category: 'ai' },
-    { label: 'Tentang', view: 'about' },
-    { label: 'Kontak', view: 'contact' },
+  const navLinks = [
+    { label: 'Beranda', to: '/' },
+    { label: 'Artikel', to: '/artikel' },
+    { label: 'Kategori', to: '/kategori/ai' },
+    { label: 'Tentang', to: '/tentang' },
+    { label: 'Kontak', to: '/kontak' },
   ];
-
-  const handleNavClick = (view: PageView, category?: CategorySlug) => {
-    onNavigate(view, category);
-    setMobileMenuOpen(false);
-  };
 
   return (
     <header className="sticky top-0 z-50 h-16 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
@@ -48,8 +39,8 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-full">
           {/* Logo TeknoGen */}
           <div className="flex items-center gap-8">
-            <div 
-              onClick={() => handleNavClick('home')}
+            <Link 
+              to="/"
               className="flex items-center gap-2.5 cursor-pointer group select-none"
               id="logo-button"
             >
@@ -63,17 +54,21 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Tekno<span className="text-blue-600 dark:text-blue-400">Gen</span>
               </span>
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
               {navLinks.map((link) => {
-                const isActive = currentView === link.view;
+                const isExact = link.to === '/';
+                const isActive = isExact
+                  ? location.pathname === '/'
+                  : location.pathname.startsWith(link.to.split('/')[1] ? `/${link.to.split('/')[1]}` : link.to);
+
                 return (
-                  <button
+                  <NavLink
                     key={link.label}
-                    id={`nav-${link.view}`}
-                    onClick={() => handleNavClick(link.view, link.category)}
+                    to={link.to}
+                    id={`nav-${link.label.toLowerCase()}`}
                     className={`transition-colors cursor-pointer ${
                       isActive
                         ? 'text-blue-600 dark:text-blue-400 font-semibold'
@@ -81,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
                     }`}
                   >
                     {link.label}
-                  </button>
+                  </NavLink>
                 );
               })}
             </nav>
@@ -114,13 +109,13 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* Signature Pill Button "Mulai Baca" */}
-            <button
+            <Link
               id="header-cta-btn"
-              onClick={() => onNavigate('articles')}
+              to="/artikel"
               className="hidden sm:inline-flex items-center bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-blue-700 transition-all shadow-sm cursor-pointer"
             >
               Mulai Baca
-            </button>
+            </Link>
 
             {/* Mobile Menu Hamburger */}
             <button
@@ -140,11 +135,16 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-6 space-y-2 shadow-xl animate-in slide-in-from-top duration-200">
           <div className="space-y-1">
             {navLinks.map((link) => {
-              const isActive = currentView === link.view;
+              const isExact = link.to === '/';
+              const isActive = isExact
+                ? location.pathname === '/'
+                : location.pathname.startsWith(link.to.split('/')[1] ? `/${link.to.split('/')[1]}` : link.to);
+
               return (
-                <button
+                <Link
                   key={link.label}
-                  onClick={() => handleNavClick(link.view, link.category)}
+                  to={link.to}
+                  onClick={() => setMobileMenuOpen(false)}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors cursor-pointer ${
                     isActive
                       ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 font-semibold'
@@ -153,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
                 >
                   <span>{link.label}</span>
                   <ChevronRight className="w-4 h-4 opacity-50" />
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -171,3 +171,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+

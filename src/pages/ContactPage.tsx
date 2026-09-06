@@ -15,8 +15,14 @@ import {
   Sparkles,
   HelpCircle
 } from 'lucide-react';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export const ContactPage: React.FC = () => {
+  useDocumentTitle(
+    'Hubungi Kami - Kerja Sama, Liputan & Redaksi TeknoGen',
+    'Hubungi tim redaksi TeknoGen untuk pertanyaan, siaran pers, kolaborasi riset, maupun feedback konten teknologi dan kecerdasan buatan.'
+  );
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',

@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Search, 
   Filter, 
@@ -12,11 +13,12 @@ import {
 import { Article, CategorySlug } from '../types';
 import { ARTICLES, CATEGORIES } from '../data/articles';
 import { ArticleCard } from '../components/ArticleCard';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 interface ArticlesPageProps {
   initialCategory?: CategorySlug;
-  onSelectArticle: (slug: string) => void;
-  onSelectCategory: (category: CategorySlug) => void;
+  onSelectArticle?: (slug: string) => void;
+  onSelectCategory?: (category: CategorySlug) => void;
 }
 
 export const ArticlesPage: React.FC<ArticlesPageProps> = ({
@@ -24,11 +26,32 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({
   onSelectArticle,
   onSelectCategory,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'all');
+  useDocumentTitle(
+    'Daftar Artikel & Analisis Teknologi',
+    'Temukan ratusan ulasan mendalam tentang perkembangan Artificial Intelligence, review software, dan inovasi hardware masa depan di TeknoGen.'
+  );
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryParam = searchParams.get('cari') || '';
+  const categoryParam = searchParams.get('kategori') || initialCategory || 'all';
+
+  const [searchQuery, setSearchQuery] = useState(queryParam);
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam);
   const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  useEffect(() => {
+    if (queryParam !== searchQuery) {
+      setSearchQuery(queryParam);
+    }
+  }, [queryParam]);
+
+  useEffect(() => {
+    if (categoryParam && categoryParam !== selectedCategory) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [categoryParam]);
 
   // Filter and sort articles
   const filteredArticles = useMemo(() => {
@@ -68,11 +91,25 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({
   const handleCategoryChange = (cat: string) => {
     setSelectedCategory(cat);
     setCurrentPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    if (cat === 'all') {
+      newParams.delete('kategori');
+    } else {
+      newParams.set('kategori', cat);
+    }
+    setSearchParams(newParams);
   };
 
   const handleSearchChange = (val: string) => {
     setSearchQuery(val);
     setCurrentPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    if (!val.trim()) {
+      newParams.delete('cari');
+    } else {
+      newParams.set('cari', val);
+    }
+    setSearchParams(newParams);
   };
 
   const resetFilters = () => {
@@ -80,6 +117,7 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({
     setSelectedCategory('all');
     setSortBy('latest');
     setCurrentPage(1);
+    setSearchParams(new URLSearchParams());
   };
 
   return (

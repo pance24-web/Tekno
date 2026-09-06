@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Clock, 
   Calendar, 
   Bookmark, 
   ArrowRight,
-  Eye,
   Heart
 } from 'lucide-react';
 import { Article, CategorySlug } from '../types';
 
 interface ArticleCardProps {
   article: Article;
-  onSelectArticle: (slug: string) => void;
+  onSelectArticle?: (slug: string) => void;
   onSelectCategory?: (category: CategorySlug) => void;
   layout?: 'grid' | 'horizontal' | 'compact';
 }
@@ -27,11 +27,13 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
   const [likeCount, setLikeCount] = useState(article.likes);
 
   const handleBookmarkToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setBookmarked(!bookmarked);
   };
 
   const handleLikeToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (liked) {
       setLiked(false);
@@ -70,10 +72,11 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 
   if (layout === 'horizontal') {
     return (
-      <div 
+      <Link 
+        to={`/artikel/${article.slug}`}
         id={`article-card-${article.slug}`}
-        onClick={() => onSelectArticle(article.slug)}
-        className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all duration-300 flex flex-col md:flex-row cursor-pointer"
+        onClick={() => onSelectArticle?.(article.slug)}
+        className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all duration-300 flex flex-col md:flex-row cursor-pointer no-underline block"
       >
         <div className="md:w-5/12 h-56 md:h-auto relative overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
           <img
@@ -126,6 +129,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={handleBookmarkToggle}
                 aria-label="Simpan artikel"
                 className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
@@ -143,15 +147,16 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 
   return (
-    <div
+    <Link
+      to={`/artikel/${article.slug}`}
       id={`article-card-${article.slug}`}
-      onClick={() => onSelectArticle(article.slug)}
-      className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all duration-300 flex flex-col cursor-pointer"
+      onClick={() => onSelectArticle?.(article.slug)}
+      className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all duration-300 flex flex-col cursor-pointer no-underline block"
     >
       {/* Thumbnail with Sleek 16:9 Aspect Video */}
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800/80">
@@ -165,6 +170,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
           <span 
             onClick={(e) => {
               if (onSelectCategory) {
+                e.preventDefault();
                 e.stopPropagation();
                 onSelectCategory(article.category);
               }
@@ -176,6 +182,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={handleBookmarkToggle}
           aria-label="Simpan artikel"
           className={`absolute top-3 right-3 p-2 rounded-xl backdrop-blur-md transition-colors cursor-pointer ${
@@ -225,6 +232,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
 
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={handleLikeToggle}
               className={`flex items-center gap-1 text-xs cursor-pointer ${
                 liked ? 'text-red-500' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
@@ -240,6 +248,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
+

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { 
   ChevronRight, 
   Calendar, 
@@ -13,31 +14,41 @@ import {
   Link2, 
   Check, 
   CheckCircle2, 
-  ArrowLeft,
   Sparkles,
   Send,
-  MessageSquare
+  MessageSquare,
+  AlertCircle
 } from 'lucide-react';
-import { Article, CategorySlug, PageView, CommentItem } from '../types';
+import { Article, CategorySlug, CommentItem } from '../types';
 import { ARTICLES, MOCK_COMMENTS } from '../data/articles';
 import { ArticleCard } from '../components/ArticleCard';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 interface ArticleDetailPageProps {
-  article: Article;
-  onNavigate: (view: PageView, category?: CategorySlug) => void;
-  onSelectArticle: (slug: string) => void;
-  onSelectCategory: (category: CategorySlug) => void;
+  article?: Article;
+  onNavigate?: (view: any, category?: CategorySlug) => void;
+  onSelectArticle?: (slug: string) => void;
+  onSelectCategory?: (category: CategorySlug) => void;
 }
 
 export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
-  article,
-  onNavigate,
+  article: propArticle,
   onSelectArticle,
   onSelectCategory,
 }) => {
+  const { slug } = useParams<{ slug: string }>();
+
+  // Find article by route slug or passed prop
+  const article = propArticle || (slug ? ARTICLES.find((a) => a.slug === slug) : null) || ARTICLES[0];
+
+  useDocumentTitle(
+    article ? article.title : 'Artikel Tidak Ditemukan',
+    article ? article.summary : undefined
+  );
+
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(article.likes);
+  const [likeCount, setLikeCount] = useState(article ? article.likes : 0);
   const [bookmarked, setBookmarked] = useState(false);
 
   // Comments state
@@ -45,6 +56,28 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
   const [commentName, setCommentName] = useState('');
   const [commentText, setCommentText] = useState('');
   const [commentSubmitted, setCommentSubmitted] = useState(false);
+
+  if (!article) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
+        <div className="w-16 h-16 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 mx-auto flex items-center justify-center">
+          <AlertCircle className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          Artikel Tidak Ditemukan
+        </h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          Artikel yang Anda cari tidak tersedia atau tautan salah.
+        </p>
+        <Link
+          to="/artikel"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold text-sm"
+        >
+          Lihat Semua Artikel
+        </Link>
+      </div>
+    );
+  }
 
   // Related articles (same category or top others excluding current)
   const relatedArticles = ARTICLES.filter((a) => a.id !== article.id)
@@ -104,37 +137,37 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
       {/* 1. BREADCRUMBS */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap pb-1">
-        <button
-          onClick={() => onNavigate('home')}
+        <Link
+          to="/"
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
         >
           Beranda
-        </button>
+        </Link>
         <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-        <button
-          onClick={() => onNavigate('articles')}
+        <Link
+          to="/artikel"
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
         >
           Artikel
-        </button>
+        </Link>
         <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-        <button
-          onClick={() => onSelectCategory(article.category)}
+        <Link
+          to={`/kategori/${article.category}`}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium text-slate-700 dark:text-slate-300 cursor-pointer"
         >
           {article.categoryLabel}
-        </button>
+        </Link>
       </nav>
 
       {/* 2. HEADER ARTIKEL */}
       <header className="space-y-6">
         <div className="flex flex-wrap items-center gap-3">
-          <span 
-            onClick={() => onSelectCategory(article.category)}
-            className="px-3 py-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 cursor-pointer hover:bg-blue-100"
+          <Link 
+            to={`/kategori/${article.category}`}
+            className="px-3 py-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors"
           >
             {article.categoryLabel}
-          </span>
+          </Link>
           <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
             <Clock className="w-3.5 h-3.5" />
             {article.readTime}
@@ -249,12 +282,13 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
       <div className="pt-4 flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold text-slate-400">Tag Terkait:</span>
         {article.tags.map((tag) => (
-          <span
+          <Link
             key={tag}
-            className="px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium"
+            to={`/artikel?cari=${encodeURIComponent(tag)}`}
+            className="px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-700 transition-colors"
           >
             #{tag}
-          </span>
+          </Link>
         ))}
       </div>
 
@@ -428,12 +462,12 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({
             </h3>
           </div>
 
-          <button
-            onClick={() => onNavigate('articles')}
+          <Link
+            to="/artikel"
             className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
           >
             Lihat Semua Arsip
-          </button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

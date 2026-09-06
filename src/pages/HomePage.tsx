@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
   Sparkles, 
@@ -7,27 +8,29 @@ import {
   Zap, 
   TrendingUp, 
   Flame, 
-  CheckCircle,
-  Award,
-  ChevronRight
+  CheckCircle
 } from 'lucide-react';
-import { Article, CategorySlug, PageView } from '../types';
+import { CategorySlug } from '../types';
 import { ARTICLES, CATEGORIES } from '../data/articles';
 import { ArticleCard } from '../components/ArticleCard';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 interface HomePageProps {
-  onNavigate: (view: PageView, category?: CategorySlug, articleSlug?: string) => void;
-  onSelectArticle: (slug: string) => void;
-  onSelectCategory: (category: CategorySlug) => void;
+  onNavigate?: (view: any, category?: CategorySlug, articleSlug?: string) => void;
+  onSelectArticle?: (slug: string) => void;
+  onSelectCategory?: (category: CategorySlug) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
-  onNavigate,
   onSelectArticle,
   onSelectCategory,
 }) => {
+  useDocumentTitle(
+    'Portal Berita AI, Aplikasi & Teknologi Masa Depan',
+    'TeknoGen menghadirkan warta dan riset mendalam seputar Artificial Intelligence (AI), aplikasi produktivitas, dan perkembangan teknologi mutakhir di Indonesia.'
+  );
+
   const featuredArticle = ARTICLES.find((a) => a.featured) || ARTICLES[0];
-  // 3 latest articles excluding the main featured if desired, or top 3 recent
   const latestArticles = ARTICLES.slice(0, 3);
   const popularArticles = [...ARTICLES].sort((a, b) => b.views - a.views).slice(0, 4);
 
@@ -66,22 +69,22 @@ export const HomePage: React.FC<HomePageProps> = ({
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <button
+                <Link
                   id="hero-explore-btn"
-                  onClick={() => onNavigate('articles')}
-                  className="px-7 sm:px-8 py-3.5 sm:py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:translate-y-[-2px] transition-all flex items-center gap-2 cursor-pointer"
+                  to="/artikel"
+                  className="px-7 sm:px-8 py-3.5 sm:py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:translate-y-[-2px] transition-all flex items-center gap-2 cursor-pointer no-underline"
                 >
                   <span>Jelajahi Artikel</span>
                   <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
+                </Link>
+                <Link
                   id="hero-ai-btn"
-                  onClick={() => onSelectCategory('ai')}
-                  className="px-7 sm:px-8 py-3.5 sm:py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all flex items-center gap-2 cursor-pointer"
+                  to="/kategori/ai"
+                  className="px-7 sm:px-8 py-3.5 sm:py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all flex items-center gap-2 cursor-pointer no-underline"
                 >
                   <Cpu className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   <span>Tren AI 2025</span>
-                </button>
+                </Link>
               </div>
 
               {/* Trust Indicators */}
@@ -100,9 +103,10 @@ export const HomePage: React.FC<HomePageProps> = ({
 
             {/* Right Hero Column: Sleek Featured Post & Floating Stats (5 cols) */}
             <div className="lg:col-span-5 relative mt-4 lg:mt-0">
-              <div 
-                onClick={() => onSelectArticle(featuredArticle.slug)}
-                className="aspect-4/3 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-800 overflow-hidden shadow-2xl relative cursor-pointer group"
+              <Link 
+                to={`/artikel/${featuredArticle.slug}`}
+                onClick={() => onSelectArticle?.(featuredArticle.slug)}
+                className="aspect-4/3 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-800 overflow-hidden shadow-2xl relative cursor-pointer group block no-underline"
               >
                 {featuredArticle.imageUrl && (
                   <img
@@ -124,7 +128,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </h3>
                   </div>
                 </div>
-              </div>
+              </Link>
 
               {/* Signature Sleek Floating Growth Stat */}
               <div className="absolute -bottom-6 -left-6 hidden sm:flex bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 items-center gap-4 z-20">
@@ -153,13 +157,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             </p>
           </div>
 
-          <button
-            onClick={() => onNavigate('articles')}
-            className="text-blue-600 dark:text-blue-400 font-semibold text-sm hover:underline flex items-center gap-1 cursor-pointer"
+          <Link
+            to="/artikel"
+            className="text-blue-600 dark:text-blue-400 font-semibold text-sm hover:underline flex items-center gap-1 cursor-pointer no-underline"
           >
             <span>Lihat Semua</span>
             <span>&rarr;</span>
-          </button>
+          </Link>
         </div>
 
         {/* 3-column Grid */}
@@ -192,11 +196,11 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {CATEGORIES.map((cat) => (
-              <div
+              <Link
                 key={cat.id}
                 id={`category-card-${cat.id}`}
-                onClick={() => onSelectCategory(cat.id)}
-                className="group relative bg-white dark:bg-slate-900 p-7 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-blue-500/50 dark:hover:border-blue-500/50 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer"
+                to={`/kategori/${cat.id}`}
+                className="group relative bg-white dark:bg-slate-900 p-7 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-blue-500/50 dark:hover:border-blue-500/50 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer no-underline"
               >
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/70 border border-blue-100 dark:border-blue-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -221,7 +225,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <span>Jelajahi Kategori Ini</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -260,10 +264,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Right: Numbered List 02 - 04 (7 cols) */}
           <div className="lg:col-span-7 flex flex-col justify-between divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-xs">
             {popularArticles.slice(1, 4).map((art, idx) => (
-              <div
+              <Link
                 key={art.id}
-                onClick={() => onSelectArticle(art.slug)}
-                className="py-4 first:pt-0 last:pb-0 flex items-start gap-4 group cursor-pointer"
+                to={`/artikel/${art.slug}`}
+                onClick={() => onSelectArticle?.(art.slug)}
+                className="py-4 first:pt-0 last:pb-0 flex items-start gap-4 group cursor-pointer no-underline"
               >
                 <span className="text-3xl font-extrabold text-slate-300 dark:text-slate-700 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0 w-8 font-mono">
                   0{idx + 2}
@@ -292,7 +297,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   alt=""
                   className="w-20 h-16 object-cover rounded-xl shrink-0 hidden sm:block group-hover:scale-105 transition-transform"
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -300,3 +305,4 @@ export const HomePage: React.FC<HomePageProps> = ({
     </div>
   );
 };
+

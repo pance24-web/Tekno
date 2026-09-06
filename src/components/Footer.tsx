@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Cpu, 
   Send, 
@@ -13,11 +14,10 @@ import {
   ShieldCheck,
   Mail
 } from 'lucide-react';
-import { PageView, CategorySlug } from '../types';
 import { CATEGORIES, TEKNOGEN_LOGO_URL } from '../data/articles';
 
 interface FooterProps {
-  onNavigate: (view: PageView, category?: CategorySlug) => void;
+  onNavigate?: (view: any, category?: any) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
@@ -87,8 +87,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Info (2 cols) */}
           <div className="lg:col-span-2 space-y-4">
-            <div 
-              onClick={() => onNavigate('home')} 
+            <Link 
+              to="/" 
               className="flex items-center gap-3 cursor-pointer group select-none inline-flex"
             >
               <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md ring-1 ring-slate-700 group-hover:scale-105 transition-transform shrink-0 bg-white flex items-center justify-center p-0.5">
@@ -101,7 +101,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <span className="text-xl font-extrabold tracking-tight text-white">
                 Tekno<span className="text-blue-400">Gen</span>
               </span>
-            </div>
+            </Link>
             
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
               TeknoGen adalah portal jurnalisme teknologi independen berbahasa Indonesia yang berfokus pada perkembangan Artificial Intelligence (AI), ulasan aplikasi produktivitas, serta inovasi hardware dan sains komputasi mutakhir.
@@ -165,22 +165,22 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <ul className="space-y-2.5 text-sm">
               {CATEGORIES.map((cat) => (
                 <li key={cat.id}>
-                  <button
-                    onClick={() => onNavigate('category', cat.id)}
+                  <Link
+                    to={`/kategori/${cat.id}`}
                     className="text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-1 group text-left cursor-pointer"
                   >
                     <span>{cat.name}</span>
                     <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
+                  </Link>
                 </li>
               ))}
               <li>
-                <button
-                  onClick={() => onNavigate('articles')}
+                <Link
+                  to="/artikel"
                   className="text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-1 text-left cursor-pointer font-medium"
                 >
                   <span>Semua Artikel</span>
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
@@ -192,36 +192,36 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <button
-                  onClick={() => onNavigate('home')}
+                <Link
+                  to="/"
                   className="text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
                 >
                   Beranda
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('articles')}
+                <Link
+                  to="/artikel"
                   className="text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
                 >
                   Daftar Artikel
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('about')}
+                <Link
+                  to="/tentang"
                   className="text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
                 >
                   Tentang Kami
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => onNavigate('contact')}
+                <Link
+                  to="/kontak"
                   className="text-slate-400 hover:text-blue-400 transition-colors cursor-pointer"
                 >
                   Kontak & Kerjasama
-                </button>
+                </Link>
               </li>
             </ul>
           </div>

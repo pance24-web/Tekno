@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { PageView, CategorySlug, Article } from './types';
-import { ARTICLES } from './data/articles';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { SearchModal } from './components/SearchModal';
+import { ScrollToTop } from './components/ScrollToTop';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -12,13 +12,9 @@ import { ArticleDetailPage } from './pages/ArticleDetailPage';
 import { CategoryPage } from './pages/CategoryPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<PageView>('home');
-  const [selectedCategory, setSelectedCategory] = useState<CategorySlug>('ai');
-  const [selectedArticleSlug, setSelectedArticleSlug] = useState<string>(
-    ARTICLES[0].slug
-  );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Dark mode state with persistence & system preference fallback
@@ -46,102 +42,40 @@ export default function App() {
     setDarkMode((prev) => !prev);
   };
 
-  // Navigation Handler
-  const handleNavigate = (
-    view: PageView,
-    category?: CategorySlug,
-    articleSlug?: string
-  ) => {
-    setCurrentView(view);
-    if (category) {
-      setSelectedCategory(category);
-    }
-    if (articleSlug) {
-      setSelectedArticleSlug(articleSlug);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Select Article & Open Detail
-  const handleSelectArticle = (slug: string) => {
-    setSelectedArticleSlug(slug);
-    setCurrentView('article-detail');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Select Category & Open Category Page
-  const handleSelectCategory = (category: CategorySlug) => {
-    setSelectedCategory(category);
-    setCurrentView('category');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Find active article for detail view
-  const currentArticle =
-    ARTICLES.find((a) => a.slug === selectedArticleSlug) || ARTICLES[0];
-
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
+      <ScrollToTop />
+
       {/* Global Sticky Header */}
       <Header
-        currentView={currentView}
-        onNavigate={handleNavigate}
         darkMode={darkMode}
         onToggleDarkMode={toggleDarkMode}
         onOpenSearch={() => setIsSearchOpen(true)}
       />
 
-      {/* Main Content Area */}
+      {/* Main Routed Content Area */}
       <main className="flex-1">
-        {currentView === 'home' && (
-          <HomePage
-            onNavigate={handleNavigate}
-            onSelectArticle={handleSelectArticle}
-            onSelectCategory={handleSelectCategory}
-          />
-        )}
-
-        {currentView === 'articles' && (
-          <ArticlesPage
-            initialCategory={selectedCategory}
-            onSelectArticle={handleSelectArticle}
-            onSelectCategory={handleSelectCategory}
-          />
-        )}
-
-        {currentView === 'article-detail' && (
-          <ArticleDetailPage
-            article={currentArticle}
-            onNavigate={handleNavigate}
-            onSelectArticle={handleSelectArticle}
-            onSelectCategory={handleSelectCategory}
-          />
-        )}
-
-        {currentView === 'category' && (
-          <CategoryPage
-            categorySlug={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-            onSelectArticle={handleSelectArticle}
-            onNavigate={handleNavigate}
-          />
-        )}
-
-        {currentView === 'about' && <AboutPage onNavigate={handleNavigate} />}
-
-        {currentView === 'contact' && <ContactPage />}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/artikel" element={<ArticlesPage />} />
+          <Route path="/artikel/:slug" element={<ArticleDetailPage />} />
+          <Route path="/kategori" element={<Navigate to="/kategori/ai" replace />} />
+          <Route path="/kategori/:slug" element={<CategoryPage />} />
+          <Route path="/tentang" element={<AboutPage />} />
+          <Route path="/kontak" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </main>
 
       {/* Global Footer */}
-      <Footer onNavigate={handleNavigate} />
+      <Footer />
 
       {/* Global Quick Search Modal */}
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
-        onSelectArticle={handleSelectArticle}
-        onSelectCategory={handleSelectCategory}
       />
     </div>
   );
 }
+

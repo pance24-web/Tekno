@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { 
   Cpu, 
   LayoutGrid, 
@@ -9,28 +10,35 @@ import {
   Search,
   BookOpen
 } from 'lucide-react';
-import { CategorySlug, PageView } from '../types';
+import { CategorySlug } from '../types';
 import { ARTICLES, CATEGORIES } from '../data/articles';
 import { ArticleCard } from '../components/ArticleCard';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 interface CategoryPageProps {
-  categorySlug: CategorySlug;
-  onSelectCategory: (category: CategorySlug) => void;
-  onSelectArticle: (slug: string) => void;
-  onNavigate: (view: PageView) => void;
+  categorySlug?: CategorySlug;
+  onSelectCategory?: (category: CategorySlug) => void;
+  onSelectArticle?: (slug: string) => void;
+  onNavigate?: (view: any) => void;
 }
 
 export const CategoryPage: React.FC<CategoryPageProps> = ({
-  categorySlug,
-  onSelectCategory,
+  categorySlug: propCategorySlug,
   onSelectArticle,
-  onNavigate,
 }) => {
+  const { slug } = useParams<{ slug: string }>();
+  const activeSlug = (slug as CategorySlug) || propCategorySlug || 'ai';
+
+  const currentCategory = CATEGORIES.find((c) => c.id === activeSlug) || CATEGORIES[0];
+
+  useDocumentTitle(
+    `Kategori: ${currentCategory.name}`,
+    currentCategory.description
+  );
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 6;
-
-  const currentCategory = CATEGORIES.find((c) => c.id === categorySlug) || CATEGORIES[0];
 
   // Filter articles by this category + optional local search
   const categoryArticles = ARTICLES.filter((a) => a.category === currentCategory.id);
@@ -61,12 +69,6 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
     }
   };
 
-  const handleCategorySwitch = (catId: CategorySlug) => {
-    onSelectCategory(catId);
-    setCurrentPage(1);
-    setSearchQuery('');
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10">
       {/* Category Tabs Switcher */}
@@ -74,10 +76,14 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
         {CATEGORIES.map((cat) => {
           const isActive = cat.id === currentCategory.id;
           return (
-            <button
+            <Link
               key={cat.id}
-              onClick={() => handleCategorySwitch(cat.id)}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
+              to={`/kategori/${cat.id}`}
+              onClick={() => {
+                setCurrentPage(1);
+                setSearchQuery('');
+              }}
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 no-underline ${
                 isActive
                   ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -89,7 +95,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
               }`}>
                 {cat.articleCount}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>
